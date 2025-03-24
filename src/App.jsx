@@ -11,14 +11,15 @@ function App() {
     { id: 2, nombre: "Teclado", precio: 50, stock: 25 },
     { id: 3, nombre: "Mouse", precio: 30, stock: 40 }
   ]);
+
   const [editingProduct, setEditingProduct] = useState(null);
+
   const [newProduct, setNewProduct] = useState({
     nombre: '',
     precio: '',
     stock: ''
   });
 
-  // Cargar productos del localStorage al iniciar
   useEffect(() => {
     const savedProducts = localStorage.getItem('products');
     if (savedProducts) {
@@ -26,7 +27,6 @@ function App() {
     }
   }, []);
 
-  // Guardar productos en localStorage cuando cambien
   useEffect(() => {
     localStorage.setItem('products', JSON.stringify(products));
   }, [products]);
@@ -112,44 +112,57 @@ function App() {
           <button type="submit">Agregar Producto</button>
         </form>
 
-        {/* Lista de productos */}
-        <div className="products-list">
-          {products.map(product => (
-            <div key={product.id} className="product-item">
-              {editingProduct && editingProduct.id === product.id ? (
-                <form onSubmit={handleUpdateProduct}>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={editingProduct.nombre}
-                    onChange={handleEditInputChange}
-                  />
-                  <input
-                    type="number"
-                    name="precio"
-                    value={editingProduct.precio}
-                    onChange={handleEditInputChange}
-                  />
-                  <input
-                    type="number"
-                    name="stock"
-                    value={editingProduct.stock}
-                    onChange={handleEditInputChange}
-                  />
-                  <button type="submit">Guardar</button>
-                </form>
-              ) : (
-                <>
-                  <h3>{product.nombre}</h3>
-                  <p>Precio: ${product.precio}</p>
-                  <p>Stock: {product.stock}</p>
-                  <button onClick={() => handleEditProduct(product)}>Editar</button>
-                  <button onClick={() => handleDeleteProduct(product.id)}>Eliminar</button>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            {products.map(product => (
+              <tr key={product.id}>
+                {editingProduct && editingProduct.id === product.id ? (
+                  <td colSpan="4">
+                    <form onSubmit={handleUpdateProduct}>
+                      <input
+                        type="text"
+                        name="nombre"
+                        value={editingProduct.nombre}
+                        onChange={handleEditInputChange}
+                      />
+                      <input
+                        type="number"
+                        name="precio"
+                        value={editingProduct.precio}
+                        onChange={handleEditInputChange}
+                      />
+                      <input
+                        type="number"
+                        name="stock"
+                        value={editingProduct.stock}
+                        onChange={handleEditInputChange}
+                      />
+                      <button type="submit">Guardar</button>
+                    </form>
+                  </td>
+                ) : (
+                  <>
+                    <td>{product.nombre}</td>
+                    <td>${product.precio}</td>
+                    <td>{product.stock}</td>
+                    <td>
+                      <button onClick={() => handleEditProduct(product)}>Editar</button>
+                      <button onClick={() => handleDeleteProduct(product.id)}>Eliminar</button>
+                    </td>
+                  </>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
 
         {products.length > 0 && (
           <button onClick={handleDeleteAll}>Eliminar Todos</button>
